@@ -11,9 +11,13 @@ global $_;
  * @param mixed $v
  * @return mixed
  */
-$_ = function ($v) { return $v; };
+$_ = function ($v)
+{
+  return $v;
+};
 
-if (!function_exists ('e')) {
+if (!function_exists('e'))
+{
   /**
    * Escapes (secures) data for output.<br>
    *
@@ -33,37 +37,40 @@ if (!function_exists ('e')) {
    * @param mixed $o
    * @return string
    */
-  function e ($o)
+  function e($o)
   {
-    switch (gettype ($o)) {
+    switch (gettype($o))
+    {
       case 'string':
         break;
       case 'boolean':
         return $o ? 'true' : 'false';
       case 'integer':
       case 'double':
-        return strval ($o);
+        return strval($o);
       case 'array':
         $at = [];
         $s  = ' ';
-        foreach ($o as $k => $v) {
-          if (!is_string ($v) && !is_numeric ($v))
-            throw new \InvalidArgumentException ("Can't output an array with values of type " . gettype ($v));
-          if (is_numeric ($k))
+        foreach ($o as $k => $v)
+        {
+          if (!is_string($v) && !is_numeric($v))
+            throw new \InvalidArgumentException("Can't output an array with values of type " . gettype($v));
+          if (is_numeric($k))
             $at[] = $v;
-          else {
+          else
+          {
             $at[] = "$k:$v";
             $s    = ';';
           }
         }
-        $o = implode ($s, $at);
+        $o = implode($s, $at);
         break;
       case 'NULL':
         return '';
       default:
-        return typeOf ($o);
+        return typeOf($o);
     }
-    return htmlentities ($o, ENT_QUOTES, 'UTF-8', false);
+    return htmlentities($o, ENT_QUOTES, 'UTF-8', false);
   }
 }
 
@@ -84,7 +91,7 @@ if (!function_exists ('e')) {
  *
  * @return bool `true` if the value is not empty.
  */
-function exists ($exp)
+function exists($exp)
 {
   return isset($exp) && $exp !== '' && $exp !== [];
 }
@@ -101,7 +108,7 @@ function exists ($exp)
  * @see when
  * @see when
  */
-function either ($a, $b, $c = null)
+function either($a, $b, $c = null)
 {
   return isset($a) && $a !== '' ? $a : (isset($b) && $b !== '' ? $b : $c);
 }
@@ -114,9 +121,9 @@ function either ($a, $b, $c = null)
  * @param mixed ...$args
  * @return mixed|null
  */
-function coalesce ()
+function coalesce()
 {
-  foreach (func_get_args () as $a)
+  foreach (func_get_args() as $a)
     if (isset($a) && $a !== '' && $a !== []) return $a;
   return null;
 }
@@ -142,9 +149,12 @@ function coalesce ()
  * @see either
  * @see when
  */
-function when ($exp, $a, $b = null)
+if (! function_exists('when'))
 {
-  return $exp || $exp === '0' ? $a : $b;
+  function when($exp, $a, $b = null)
+  {
+    return $exp || $exp === '0' ? $a : $b;
+  }
 }
 
 /**
@@ -156,21 +166,21 @@ function when ($exp, $a, $b = null)
  * @param mixed  ...$args
  * @return string
  */
-function enum ($delimiter)
+function enum($delimiter)
 {
-  $args = func_get_args ();
+  $args = func_get_args();
   array_shift($args);
-	return join($delimiter, array_filter($args, function ($str)
-		{
-			if ($str === null)
-				return false;
-			if (strlen($str) == 0)//false and empty strings ""
-				return false;
-		if (trim($str) == "")//whitespaces
-				return false;
-			return true;
-		}));
-	//return join ($delimiter, array_prune_empty (array_map ('trim', $args)));//trim(): Passing null to parameter #1 ($string) of type string is deprecated
+  return join($delimiter, array_filter($args, function ($str)
+  {
+    if ($str === null)
+      return false;
+    if (strlen($str) == 0) //false and empty strings ""
+      return false;
+    if (trim($str) == "") //whitespaces
+      return false;
+    return true;
+  }));
+  //return join ($delimiter, array_prune_empty (array_map ('trim', $args)));//trim(): Passing null to parameter #1 ($string) of type string is deprecated
 }
 
 /**
@@ -179,9 +189,9 @@ function enum ($delimiter)
  * @param mixed $a A variable.
  * @param mixed $b A variable.
  */
-function swap (& $a, & $b)
+function swap(&$a, &$b)
 {
-  list ($a, $b) = [$b, $a];
+  list($a, $b) = [$b, $a];
 }
 
 /**
@@ -190,11 +200,11 @@ function swap (& $a, & $b)
  * @param mixed $x
  * @return string
  */
-function typeOf ($x)
+function typeOf($x)
 {
-  if (is_object ($x)) return get_class ($x);
-  if (is_null ($x)) return 'null';
-  return gettype ($x);
+  if (is_object($x)) return get_class($x);
+  if (is_null($x)) return 'null';
+  return gettype($x);
 }
 
 /**
@@ -204,24 +214,26 @@ function typeOf ($x)
  * @param mixed $x
  * @return string
  */
-function shortTypeOf ($x)
+function shortTypeOf($x)
 {
-  if (is_object ($x)) {
-    $n = explode ('\\', get_class ($x));
-    return array_pop ($n);
+  if (is_object($x))
+  {
+    $n = explode('\\', get_class($x));
+    return array_pop($n);
   }
-  return gettype ($x);
+  return gettype($x);
 }
 
-if (!function_exists('is_iterable')) {
+if (!function_exists('is_iterable'))
+{
   /**
    * Detects if the argument is traversable using `foreach`.
    *
    * @param $x
    * @return bool
    */
-  function is_iterable ($x)
+  function is_iterable($x)
   {
-    return $x instanceof Traversable || is_array ($x);
+    return $x instanceof Traversable || is_array($x);
   }
 }
